@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # 允许手动点按钮触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -12,15 +12,26 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 侦探步骤：确保文件都在
+      - name: 🔍 Check Files
+        run: |
+          if [ -f "requirements.txt" ]; then
+            echo "✅ requirements.txt found"
+          else
+            echo "❌ requirements.txt MISSING"
+            exit 1
+          fi
+          if [ -f "main.py" ]; then
+            echo "✅ main.py found"
+          else
+            echo "❌ main.py MISSING"
+            exit 1
+          fi
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -28,10 +39,17 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # ★★★ 关键修改：降级 Flutter 版本以匹配 Flet 0.24.1 ★★★
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0' # 配合 Flet 0.24.1 的稳定版本
+          flutter-version: '3.22.2'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install cookiecutter
 
       - name: Build APK
         run: |
