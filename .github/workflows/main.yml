@@ -1,34 +1,44 @@
 name: Build Android APK
-
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+  workflow_dispatch: # 允许手动点按钮触发
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-    - name: Install Dependencies
-      run: |
-        pip install flet peewee
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Build APK with Flet
-      uses: flet-dev/flet-action@v0.1.2
-      with:
-        # 这里的名字对应你代码里的图标等配置，保持默认即可
-        target: main.py 
-        package_name: com.mytodo.app
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: my-todo-app-apk
-        path: build/apk/app-release.apk
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0' # 配合 Flet 0.24.1 的稳定版本
+
+      - name: Build APK
+        run: |
+          flet build apk --verbose
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/apk/app-release.apk
