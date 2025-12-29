@@ -23,11 +23,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ★★★ 核心修改：锁定 Flutter 为 3.24.2（目前打包成功率最高的版本）★★★
+      # ★★★ 核心修复：锁死 Flutter 3.22.2，完美兼容 Flet 0.24.1 ★★★
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.2'
+          flutter-version: '3.22.2'
 
       - name: Install Dependencies
         run: |
@@ -36,7 +36,7 @@ jobs:
           pip install cookiecutter
 
       - name: Build APK
-        # 加上 --yes 自动确认，防止卡住
+        # ★★★ 加上 --yes 防止卡住，加上 --verbose 看日志 ★★★
         run: |
           flet build apk --yes --verbose
 
