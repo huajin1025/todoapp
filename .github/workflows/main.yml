@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch: # 允许手动点按钮触发
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ★★★ 升级：使用最新的 Flutter 3.24.2 来匹配最新 Flet ★★★
+      # 使用最新的 Flutter 3.24.x 匹配最新的 Flet
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -36,9 +36,9 @@ jobs:
           pip install cookiecutter
 
       - name: Build APK
-        # 增加 --include-packages flet 参数，这是解决 kernel_snapshot 错误的绝招
+        # ★★★ 修复：删除了报错的参数，只保留 --verbose ★★★
         run: |
-          flet build apk --verbose --include-packages flet
+          flet build apk --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
