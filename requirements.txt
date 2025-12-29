@@ -1,4 +1,5 @@
-flet
+flet==0.24.1
 peewee
 setuptools
 wheel
+
