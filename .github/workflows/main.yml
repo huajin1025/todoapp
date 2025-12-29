@@ -12,22 +12,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 侦探步骤：确保文件都在
-      - name: 🔍 Check Files
-        run: |
-          if [ -f "requirements.txt" ]; then
-            echo "✅ requirements.txt found"
-          else
-            echo "❌ requirements.txt MISSING"
-            exit 1
-          fi
-          if [ -f "main.py" ]; then
-            echo "✅ main.py found"
-          else
-            echo "❌ main.py MISSING"
-            exit 1
-          fi
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -39,11 +23,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ★★★ 关键修改：降级 Flutter 版本以匹配 Flet 0.24.1 ★★★
+      # ★★★ 升级：使用最新的 Flutter 3.24.2 来匹配最新 Flet ★★★
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'
+          flutter-version: '3.24.2'
 
       - name: Install Dependencies
         run: |
@@ -52,8 +36,9 @@ jobs:
           pip install cookiecutter
 
       - name: Build APK
+        # 增加 --include-packages flet 参数，这是解决 kernel_snapshot 错误的绝招
         run: |
-          flet build apk --verbose
+          flet build apk --verbose --include-packages flet
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
