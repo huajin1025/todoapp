@@ -12,6 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # ★★★ 核心修复：强制生成一个干净的 requirements.txt，防止空行报错 ★★★
+      - name: Create clean requirements.txt
+        run: |
+          rm -f requirements.txt
+          printf "flet==0.24.1\npeewee\nsetuptools\nwheel" > requirements.txt
+          cat requirements.txt
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -36,8 +43,7 @@ jobs:
           pip install cookiecutter
 
       - name: Build APK
-        # ★★★ 终极绝招：使用 'yes |' 管道强制自动确认 ★★★
-        # 删掉了不支持的 --yes 参数，改用 Linux 管道命令
+        # 使用 yes 管道自动确认
         run: |
           yes | flet build apk --verbose
 
