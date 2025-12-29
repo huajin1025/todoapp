@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # 允许手动点按钮触发
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,22 +23,20 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ★★★ 改动1：使用 stable 版本，自动匹配最新的 Flet ★★★
+      # ★★★ 核心修改：锁定 Flutter 为 3.24.2（目前打包成功率最高的版本）★★★
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
+          flutter-version: '3.24.2'
 
       - name: Install Dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          # ★★★ 改动2：提前安装 cookiecutter，防止 Flet 因为缺这个工具而弹窗询问 ★★★
           pip install cookiecutter
 
       - name: Build APK
-        # ★★★ 改动3：加上 --yes (自动确认) 和 --verbose (看日志) ★★★
-        # 去掉了 --include-packages 参数，因为新版 Flet 已经不需要了
+        # 加上 --yes 自动确认，防止卡住
         run: |
           flet build apk --yes --verbose
 
