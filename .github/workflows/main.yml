@@ -23,7 +23,7 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ★★★ 核心修复：锁死 Flutter 3.22.2，完美兼容 Flet 0.24.1 ★★★
+      # 锁定 Flutter 3.22.2 (匹配 Flet 0.24.1)
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -36,9 +36,10 @@ jobs:
           pip install cookiecutter
 
       - name: Build APK
-        # ★★★ 加上 --yes 防止卡住，加上 --verbose 看日志 ★★★
+        # ★★★ 终极绝招：使用 'yes |' 管道强制自动确认 ★★★
+        # 删掉了不支持的 --yes 参数，改用 Linux 管道命令
         run: |
-          flet build apk --yes --verbose
+          yes | flet build apk --verbose
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
