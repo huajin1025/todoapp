@@ -1,0 +1,34 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install Dependencies
+      run: |
+        pip install flet peewee
+
+    - name: Build APK with Flet
+      uses: flet-dev/flet-action@v0.1.2
+      with:
+        # 这里的名字对应你代码里的图标等配置，保持默认即可
+        target: main.py 
+        package_name: com.mytodo.app
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: my-todo-app-apk
+        path: build/apk/app-release.apk
